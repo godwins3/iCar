@@ -1,6 +1,14 @@
 import demo
 import cv2
 import mediapipe as mp
+#innitialize africastalkings
+import africastalking
+
+username='campaignSms'
+api_key='f889296043073085e9038f75dc7bc46cdd65f9c473fc49ae555103a532f971a6'
+
+africastalking.initialize(username, api_key)
+
 
 mp_face_mesh = mp.solutions.face_mesh
 face_mesh = mp_face_mesh.FaceMesh(min_detection_confidence=0.5, min_tracking_confidence=0.5)
@@ -29,34 +37,66 @@ text1X = 1160
 text1Y = 40
 pause = False
 
-def message():
-    message= {}
+def get_message(level):
+    message_dict= [
+        "Hooray you have reached level" + level + "of the game. You are now a pro" /n +"Did you know that Kisumu is the cleanest city in Kenya",
+        "Please wear a mask to avoid being infected with covid-19",
+        "Thank you for your cooperation"
+    ]
+    m = random.choice(message_dict)
+    return m
 
-    return message
-    
-
-def africastalking():
-    import africastalking
-
-    africastalking.initialize(
-    username='Praise Godwins',
-    api_key='0400606da5dc0bb3c11596d85d645b5f419c2e845b766750b22d8b8f0d6a5a34'
-    )
+class send_sms():
 
     sms = africastalking.SMS
+    def sending(self):
+        # Set the numbers in international format
+        recipients = ["+254742079321"]
+        # Set your message
+        message = get_message()
+        # Set your shortCode or senderId
+        #sender = "iCar Ltd"
+        try:
+            response = self.sms.send(message, recipients)
+            print (response)
+        except Exception as e:
+            print (f'Houston, we have a problem: {e}')
+def landing():
+    number =""
+    intro = True
+    while intro:
+        screen.fill((0, 0, 0))
+        screen.blit(background2, (0, 0))
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+            elif event.type == pygame.KEYDOWN:
+                if event.unicode.isdigit() and len(input_text) < 10:
+                    input_text += event.unicode
+                elif event.key == pygame.K_BACKSPACE:
+                    input_text = input_text[:-1]
 
-    # Set the numbers in international format
-    recipients = ["+254722123123"]
-    # Set your message
-    message = message()
-    # Set your shortCode or senderId
-    sender = "iCar ltd"
-    try:
-        response = sms.send(message, recipients, sender)
-        print (response)
-    except Exception as e:
-        print (f'User, we have a problem: {e}')
-    africastalking()
+        largetext = pygame.font.Font('freesansbold.ttf',80)
+        Textsurf, TextRect = text_objects('Car Game',largetext)
+        TextRect.center = (300,150)
+        screen.blit(Textsurf,TextRect)
+
+        # Set up the text input box
+        text_box = pygame.Rect(250, 250, 300, 50)
+        pygame.draw.rect(screen,(255,255,255), text_box, 2)
+        # Draw the text input
+        font = pygame.font.Font(None, 32)
+        text_surface = font.render(input_text, True, (0, 0, 0))
+        screen.blit(text_surface, (text_box.x + 5, text_box.y + 5))
+
+        button("Submit",200,520,200,50,(0,255,255),(0,155,150),"play")
+
+        pygame.display.update()
+        clock.tick(50)
+        return number
+
+
 
 def intro_loop():
     intro = True
@@ -247,6 +287,7 @@ def show_score1(passed,level, x, y):
 def crash(x,y):
     score = font.render("You Crashed! ", True, (255, 255, 255))
     screen.blit(score, (x, y))
+    send_sms().sending()
     pygame.display.update()
     pygame.time.wait(500)
     game_loop()
@@ -352,7 +393,7 @@ def game_loop():
         pygame.display.update()
         clock.tick(60)
 
-
+landing()
 intro_loop()
 game_loop()
 pygame.quit()
