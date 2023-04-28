@@ -29,6 +29,34 @@ text1X = 1160
 text1Y = 40
 pause = False
 
+def message():
+    message= {}
+
+    return message
+    
+
+def africastalking():
+    import africastalking
+
+    africastalking.initialize(
+    username='Praise Godwins',
+    api_key='0400606da5dc0bb3c11596d85d645b5f419c2e845b766750b22d8b8f0d6a5a34'
+    )
+
+    sms = africastalking.SMS
+
+    # Set the numbers in international format
+    recipients = ["+254722123123"]
+    # Set your message
+    message = message()
+    # Set your shortCode or senderId
+    sender = "iCar ltd"
+    try:
+        response = sms.send(message, recipients, sender)
+        print (response)
+    except Exception as e:
+        print (f'User, we have a problem: {e}')
+    africastalking()
 
 def intro_loop():
     intro = True
